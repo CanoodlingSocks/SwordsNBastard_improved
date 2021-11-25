@@ -10,11 +10,28 @@ namespace SwordsNBastard_improved
 {
     public class Player
     {
+        public static List<Player> PlayerInfo = new List<Player>();
+        public string _currentPlayer;
+
         private string _playerName;
         public string PlayerName
         {
             get { return _playerName; }
             set { _playerName = value; }
+        }
+
+        private string[] _inventory;
+        public string[] Inventory 
+        {
+            get { return _inventory; }
+            set { _inventory = value; }
+        }
+
+        private string _weapon;
+        public string Weapon 
+        {
+            get { return _weapon; }
+            set { _weapon = value; }
         }
 
         public void CreatePlayer()
@@ -24,11 +41,13 @@ namespace SwordsNBastard_improved
             bool loop = true;
             while (loop)
             {
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Clear();
                 Console.WriteLine("Ah a new Hero! Welcome!  What's your name?\n");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("You: ");
-                string playerName = Console.ReadLine();
-                if (playerName == String.Empty)
+                newPlayer.PlayerName = Console.ReadLine().ToUpper();
+                if (PlayerName == String.Empty)
                 {
                     Console.Clear();
                     Console.ForegroundColor = ConsoleColor.White;
@@ -39,22 +58,52 @@ namespace SwordsNBastard_improved
 
                 }
 
-                //Add Player to .txt file
+                _currentPlayer = PlayerName; //To be able to get player info from List withouth showing all entries
 
-                // This was supposed to find the folder within the solution directly instead of
-                // writing a long-ass directory path that won't work on other computersss
-                string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Player\player.txt");
+                //Add Player name to .txt file (Only used for Looading players) 
 
-                using (FileStream fs = new FileStream(path, FileMode.Append))
-                {
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        newPlayer.PlayerName = playerName;
-                        //string[] files = File.ReadAllLines(path);
-                    }
-                }
+                string fileName = "player.txt";
+                string path = Path.Combine(Environment.CurrentDirectory, @"Player\", fileName);
+
+                File.AppendAllText(fileName, newPlayer.PlayerName.ToString() + Environment.NewLine);
+
+                //Add Player name to List (to use in the actual game)
+
+                newPlayer.Inventory = null; // <-- No inventory at the beginning
+                newPlayer.Weapon = "Dull dagger"; //TODO <-- Starter weapon, Add attributes later!
+
+                PlayerInfo.Add(newPlayer);
+
+                //Add list to ListPlayer.txt
+
+                File.WriteAllLines(@"Player\ListPlayer.txt", newPlayer); //? HELP
+
+                break; //TODO <-- the rest of the fuking game
             }
+        }
+
+        public static void PrintPlayerInfo(Player player)
+        {
+            Console.WriteLine("Name: " + player.PlayerName);
+            Console.WriteLine("Active weapon: " + player.Weapon);
+            Console.WriteLine("Inventory: " + player.Inventory);
+        }
+
+        public void ListPlayers()
+        {
+            //if(PlayerInfo.Contains(currentPlayer))
+
+            //if (!NemesisList.Contains(nemesis))  Example code
+            //{
+            //    NemesisList.Add(nemesis);
+            //}
+        }
+
+        public void LoadPlayer()
+        {
 
         }
+
     }
 }
+

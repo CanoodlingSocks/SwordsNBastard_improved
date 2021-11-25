@@ -16,11 +16,9 @@ namespace SwordsNBastard_improved
 
             Title title = new Title();
             title.MainTitle();
-            Player player = new Player();
 
-            player.CreatePlayer();
-            
-            Console.ReadLine();
         }
+
     }
 }
+
