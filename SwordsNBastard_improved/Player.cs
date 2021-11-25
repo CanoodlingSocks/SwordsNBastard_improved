@@ -21,14 +21,14 @@ namespace SwordsNBastard_improved
         }
 
         private string[] _inventory;
-        public string[] Inventory 
+        public string[] Inventory
         {
             get { return _inventory; }
             set { _inventory = value; }
         }
 
         private string _weapon;
-        public string Weapon 
+        public string Weapon
         {
             get { return _weapon; }
             set { _weapon = value; }
@@ -76,13 +76,19 @@ namespace SwordsNBastard_improved
 
                 //Add list to ListPlayer.txt
 
-                using(FileStream fs = File.OpenWrite("ListPlayer.txt")) 
+                using (FileStream fs = File.OpenWrite("ListPlayer.txt"))
                 {
-                    using(StreamWriter sw = new StreamWriter(fs))
+                    using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        foreach(var element in PlayerInfo)
+                        foreach (var element in PlayerInfo)
                         {
-                            string info = newPlayer.PlayerName + "£" + newPlayer.Weapon + "£" + newPlayer.Inventory;
+                            string info = newPlayer.PlayerName + "£" + newPlayer.Weapon;
+
+                            string inventory = "";
+                            foreach (var item in inventory)
+                            {
+                                inventory = inventory + "&" + item;
+                            }
                             sw.WriteLine(info);
                         }
                     }
@@ -94,11 +100,34 @@ namespace SwordsNBastard_improved
             }
         }
 
-        public static void PrintPlayerInfo(Player player)
+        public static List<Player> PrintPlayerInfo(List<Player> PlayerInfo)
         {
-            Console.WriteLine("Name: " + player.PlayerName);
-            Console.WriteLine("Active weapon: " + player.Weapon);
-            Console.WriteLine("Inventory: " + player.Inventory);
+            Player player = new Player();
+            string[] playerInventory = new string[3];
+
+            using (StreamReader sr = new StreamReader("ListPlayer.txt"))
+            {
+                while (sr.Peek() >= 0)
+                {
+                    string str;
+                    string[] strArray;
+                    str = sr.ReadLine();
+
+                    strArray = str.Split('£');
+                    player.PlayerName = strArray[0];
+                    player.Weapon = strArray[1];
+
+                    foreach (string item in playerInventory)
+                    {
+                        //TODO Add new split lol
+                    }
+                    //player.Inventory = strArray[2]; //? FIX DIS
+                }
+            }
+            return PlayerInfo;
+            //Console.WriteLine("Name: " + player.PlayerName);
+            //Console.WriteLine("Active weapon: " + player.Weapon);
+            //Console.WriteLine("Inventory: " + player.Inventory);
         }
 
         public void ListPlayers()
@@ -113,42 +142,80 @@ namespace SwordsNBastard_improved
 
         public void LoadPlayer()
         {
+            Console.WriteLine("                       ");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine("|     LOAD PLAYER     |");
+            Console.WriteLine("-----------------------");
             foreach (string player in File.ReadLines("player.txt"))
             {
-                if(new FileInfo("player.txt").Length == 0) 
+                if (new FileInfo("player.txt").Length == 0)   //? This part doesn't work yet, maybe add option to delete old players?
                 {
-                    Console.WriteLine("                       ");
-                    Console.WriteLine("-----------------------");
-                    Console.WriteLine("|     LOAD PLAYER     |");
-                    Console.WriteLine("-----------------------");
                     Console.WriteLine("        No Data!       ");
                     break;
                 }
-                Console.WriteLine("                       ");
-                Console.WriteLine("-----------------------");
-                Console.WriteLine("|     LOAD PLAYER     |");
-                Console.WriteLine("-----------------------");
                 Console.WriteLine(player);
-
-                Console.WriteLine("\nInput player name to load. Press enter if you want to go back");
-                Console.Write("Input: ");
-
-                string input = Console.ReadLine().ToUpper();
-                if(input == null)
-                {
-                    break;
-                }
-                else if(input == player) // <-- PLACEHOLDER CODE PLZ DO NOT JUDGE
-                {
-                    Console.WriteLine($"\nLoading {player}");
-                    Console.ReadLine();
-
-                    //TODO Start game with this player's stats
-                }
-
             }
+
+            Console.WriteLine("\nInput player name to load. Press enter if you want to go back");
+            Console.Write("Input: ");
+            var playerList = File.ReadAllLines("player.txt");
+            string input = Console.ReadLine().ToUpper();
+
+            if (playerList.Contains(input, StringComparer.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"\nLoading {input}");
+                Console.ReadKey();
+            }
+
+            //TODO Start game with this player's stats
         }
 
+        public void DeletePlayer()
+        {
+            Console.WriteLine("                       ");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine("|     DELETE DATA     |");
+            Console.WriteLine("-----------------------");
+
+            foreach (string player in File.ReadLines("player.txt"))
+            {
+                Console.WriteLine(player);
+            }
+            Console.WriteLine("\nDo you want to delete a profile?");
+            Console.WriteLine("Input name of the profile you wish to delete, otherwise press enter to back out");
+            Console.Write("Input: ");
+            var playerList = File.ReadAllLines("player.txt");
+            string input = Console.ReadLine().ToUpper();
+
+            // This part here officer! This is the offender!
+            string old;
+            string n = "";
+            StreamReader sr = File.OpenText("player.txt");
+            while ((old = sr.ReadLine()) != null)
+            {
+                if (!old.Contains(input))
+                {
+                    Console.WriteLine($"Are you sure you wish to delete profile {input}? Y/N");
+                    ConsoleKey confirm = Console.ReadKey(false).Key;
+
+                    if (confirm == ConsoleKey.Y)
+                    {
+                        n += old + Environment.NewLine; // Re-writes the entries in the textfile except the onw we want to "delete"
+                    }
+                    sr.Close();
+                    File.WriteAllText("player.txt", n);
+                }
+            }
+            //if (playerList.Contains(input, StringComparer.OrdinalIgnoreCase))
+            //{
+            //    Console.WriteLine($"\nLoading {input}");
+            //    Console.ReadKey();
+            //}
+
+        }
     }
 }
+
+
+
 

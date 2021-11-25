@@ -25,6 +25,7 @@ namespace SwordsNBastard_improved
                 Console.WriteLine(@"                                         ");
                 Console.WriteLine(@"              -> New Game                ");
                 Console.WriteLine(@"              -> Load Game               ");
+                Console.WriteLine(@"              -> Delete Data             ");
                 Console.WriteLine(@"              -> Exit                    ");
                 Console.Write("\nInput: ");
 
@@ -39,6 +40,10 @@ namespace SwordsNBastard_improved
 
                     case "LOAD GAME":
                         player.LoadPlayer();
+                        break;
+
+                    case "DELETE DATA":
+                        player.DeletePlayer();
                         break;
 
                     case "EXIT":
