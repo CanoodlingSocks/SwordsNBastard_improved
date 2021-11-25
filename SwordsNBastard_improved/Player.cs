@@ -69,14 +69,26 @@ namespace SwordsNBastard_improved
 
                 //Add Player name to List (to use in the actual game)
 
-                newPlayer.Inventory = null; // <-- No inventory at the beginning
                 newPlayer.Weapon = "Dull dagger"; //TODO <-- Starter weapon, Add attributes later!
+                newPlayer.Inventory = null; // <-- No inventory at the beginning
 
                 PlayerInfo.Add(newPlayer);
 
                 //Add list to ListPlayer.txt
 
-                File.WriteAllLines(@"Player\ListPlayer.txt", newPlayer); //? HELP
+                using(FileStream fs = File.OpenWrite("ListPlayer.txt")) 
+                {
+                    using(StreamWriter sw = new StreamWriter(fs))
+                    {
+                        foreach(var element in PlayerInfo)
+                        {
+                            string info = newPlayer.PlayerName + "£" + newPlayer.Weapon + "£" + newPlayer.Inventory;
+                            sw.WriteLine(info);
+                        }
+                    }
+                }
+
+                //File.WriteAllLines(@"Player\ListPlayer.txt", newPlayer); //? HELP
 
                 break; //TODO <-- the rest of the fuking game
             }
@@ -101,7 +113,40 @@ namespace SwordsNBastard_improved
 
         public void LoadPlayer()
         {
+            foreach (string player in File.ReadLines("player.txt"))
+            {
+                if(new FileInfo("player.txt").Length == 0) 
+                {
+                    Console.WriteLine("                       ");
+                    Console.WriteLine("-----------------------");
+                    Console.WriteLine("|     LOAD PLAYER     |");
+                    Console.WriteLine("-----------------------");
+                    Console.WriteLine("        No Data!       ");
+                    break;
+                }
+                Console.WriteLine("                       ");
+                Console.WriteLine("-----------------------");
+                Console.WriteLine("|     LOAD PLAYER     |");
+                Console.WriteLine("-----------------------");
+                Console.WriteLine(player);
 
+                Console.WriteLine("\nInput player name to load. Press enter if you want to go back");
+                Console.Write("Input: ");
+
+                string input = Console.ReadLine().ToUpper();
+                if(input == null)
+                {
+                    break;
+                }
+                else if(input == player) // <-- PLACEHOLDER CODE PLZ DO NOT JUDGE
+                {
+                    Console.WriteLine($"\nLoading {player}");
+                    Console.ReadLine();
+
+                    //TODO Start game with this player's stats
+                }
+
+            }
         }
 
     }

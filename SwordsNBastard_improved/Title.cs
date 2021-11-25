@@ -26,23 +26,22 @@ namespace SwordsNBastard_improved
                 Console.WriteLine(@"              -> New Game                ");
                 Console.WriteLine(@"              -> Load Game               ");
                 Console.WriteLine(@"              -> Exit                    ");
-                Console.Write("Input: ");
+                Console.Write("\nInput: ");
 
                 Player player = new Player();
-                string input = Console.ReadLine();
+                string input = Console.ReadLine().ToUpper();
 
                 switch (input)
                 {
-                    case "new game":
+                    case "NEW GAME":
                         player.CreatePlayer();
                         break;
 
-                    case "load game":
-                        Console.WriteLine("To be implemented!");
-                        Console.ReadLine();
+                    case "LOAD GAME":
+                        player.LoadPlayer();
                         break;
 
-                    case "exit":
+                    case "EXIT":
                         menuLoop = false;
                         break;
 
