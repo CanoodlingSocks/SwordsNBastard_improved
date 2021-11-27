@@ -117,11 +117,14 @@ namespace SwordsNBastard_improved
                     player.PlayerName = strArray[0];
                     player.Weapon = strArray[1];
 
-                    foreach (string item in playerInventory)
+                    string inventory = "";
+                    foreach (string item in player.Inventory)
                     {
-                        //TODO Add new split lol
+                        string[] strArray2;
+                        strArray2 = str.Split('&');
+                        inventory = inventory + "&" + item;
                     }
-                    //player.Inventory = strArray[2]; //? FIX DIS
+
                 }
             }
             return PlayerInfo;
@@ -187,30 +190,24 @@ namespace SwordsNBastard_improved
             var playerList = File.ReadAllLines("player.txt");
             string input = Console.ReadLine().ToUpper();
 
-            // This part here officer! This is the offender!
-            string old;
-            string n = "";
-            StreamReader sr = File.OpenText("player.txt");
-            while ((old = sr.ReadLine()) != null)
+            if (playerList.Contains(input))
             {
-                if (!old.Contains(input))
-                {
-                    Console.WriteLine($"Are you sure you wish to delete profile {input}? Y/N");
-                    ConsoleKey confirm = Console.ReadKey(false).Key;
+                Console.WriteLine($"\nAre you sure you wish to delete profile {input}? Y/N");
+                ConsoleKey confirm = Console.ReadKey(false).Key;
 
-                    if (confirm == ConsoleKey.Y)
-                    {
-                        n += old + Environment.NewLine; // Re-writes the entries in the textfile except the onw we want to "delete"
-                    }
-                    sr.Close();
-                    File.WriteAllText("player.txt", n);
+                if (confirm == ConsoleKey.Y)
+                {
+                    var newPlayerList = playerList.Where(line => !line.Contains(input));
+                    File.WriteAllLines("player.txt", newPlayerList);
+                    FileStream fs = new FileStream("player.txt", FileMode.Append);
+                    fs.Close();
                 }
             }
-            //if (playerList.Contains(input, StringComparer.OrdinalIgnoreCase))
-            //{
-            //    Console.WriteLine($"\nLoading {input}");
-            //    Console.ReadKey();
-            //}
+            else if (!playerList.Contains(input))
+            {
+                Console.WriteLine("\n No entry with that name could be found. . .");
+                Console.ReadKey();
+            }
 
         }
     }
