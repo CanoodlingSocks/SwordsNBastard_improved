@@ -100,7 +100,7 @@ namespace SwordsNBastard_improved
             }
         }
 
-        public static List<Player> PrintPlayerInfo(List<Player> PlayerInfo)
+        public static List<Player> PrintPlayerInfo(List<Player> PlayerInfo) //? Fix dis
         {
             Player player = new Player();
             string[] playerInventory = new string[3];
@@ -133,7 +133,7 @@ namespace SwordsNBastard_improved
             //Console.WriteLine("Inventory: " + player.Inventory);
         }
 
-        public void ListPlayers()
+        public void ListPlayer() //Supposed to work on every individual profile 
         {
             //if(PlayerInfo.Contains(currentPlayer))
 
@@ -149,28 +149,43 @@ namespace SwordsNBastard_improved
             Console.WriteLine("-----------------------");
             Console.WriteLine("|     LOAD PLAYER     |");
             Console.WriteLine("-----------------------");
-            foreach (string player in File.ReadLines("player.txt"))
-            {
-                if (new FileInfo("player.txt").Length == 0)   //? This part doesn't work yet, maybe add option to delete old players?
-                {
-                    Console.WriteLine("        No Data!       ");
-                    break;
-                }
-                Console.WriteLine(player);
-            }
 
-            Console.WriteLine("\nInput player name to load. Press enter if you want to go back");
-            Console.Write("Input: ");
-            var playerList = File.ReadAllLines("player.txt");
-            string input = Console.ReadLine().ToUpper();
-
-            if (playerList.Contains(input, StringComparer.OrdinalIgnoreCase))
+            if (!File.Exists("player.txt")) //Bypassing error when trying to load before debug file been created
             {
-                Console.WriteLine($"\nLoading {input}");
+                Console.WriteLine("\nNo saved data to load. . .");
                 Console.ReadKey();
             }
+            else if (File.Exists("player.txt"))
+            {
+                if (new FileInfo("player.txt").Length == 0) //When debug file been created but entries deleted
+                {
+                    Console.WriteLine("\nNo saved data to load. . .");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    foreach (string player in File.ReadLines("player.txt"))
+                    {
+                        Console.WriteLine(player);
+                    }
 
-            //TODO Start game with this player's stats
+                    Console.WriteLine("\nInput player name to load. Press enter if you want to go back");
+                    Console.Write("Input: ");
+                    var playerList = File.ReadAllLines("player.txt");
+                    string input = Console.ReadLine().ToUpper();
+
+                    if (playerList.Contains(input, StringComparer.OrdinalIgnoreCase))
+                    {
+                        //TODO Add ThreadSleep(300)
+                        Console.WriteLine($"\nLoading {input}. . .");
+                        Console.ReadKey();
+                    }
+                }
+
+                //TODO Start game with this player's stats
+            }
+
+
         }
 
         public void DeletePlayer()
@@ -180,35 +195,55 @@ namespace SwordsNBastard_improved
             Console.WriteLine("|     DELETE DATA     |");
             Console.WriteLine("-----------------------");
 
-            foreach (string player in File.ReadLines("player.txt"))
+            if (!File.Exists("player.txt")) //Bypassing error when trying to Delete before debug file been created
             {
-                Console.WriteLine(player);
-            }
-            Console.WriteLine("\nDo you want to delete a profile?");
-            Console.WriteLine("Input name of the profile you wish to delete, otherwise press enter to back out");
-            Console.Write("Input: ");
-            var playerList = File.ReadAllLines("player.txt");
-            string input = Console.ReadLine().ToUpper();
-
-            if (playerList.Contains(input))
-            {
-                Console.WriteLine($"\nAre you sure you wish to delete profile {input}? Y/N");
-                ConsoleKey confirm = Console.ReadKey(false).Key;
-
-                if (confirm == ConsoleKey.Y)
-                {
-                    var newPlayerList = playerList.Where(line => !line.Contains(input));
-                    File.WriteAllLines("player.txt", newPlayerList);
-                    FileStream fs = new FileStream("player.txt", FileMode.Append);
-                    fs.Close();
-                }
-            }
-            else if (!playerList.Contains(input))
-            {
-                Console.WriteLine("\n No entry with that name could be found. . .");
+                Console.WriteLine("\nNo Data can be found. . .");
                 Console.ReadKey();
             }
+            else if (File.Exists("player.txt")) 
+            {
+                if (new FileInfo("player.txt").Length == 0) //When debug file been created but entries had been deleted
+                {
+                    Console.WriteLine("\nNo Data can be found. . .");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    foreach (string player in File.ReadLines("player.txt"))
+                    {
+                        Console.WriteLine(player);
 
+
+                    }
+                    Console.WriteLine("\nDo you want to delete a profile?");
+                    Console.WriteLine("Input name of the profile you wish to delete, otherwise press enter to back out");
+                    Console.Write("Input: ");
+                    var playerList = File.ReadAllLines("player.txt");
+                    string input = Console.ReadLine().ToUpper();
+
+                    if (playerList.Contains(input))
+                    {
+                        Console.WriteLine($"\nAre you sure you wish to delete profile {input}? Y/N");
+                        ConsoleKey confirm = Console.ReadKey(false).Key;
+
+                        if (confirm == ConsoleKey.Y)
+                        {
+                            var newPlayerList = playerList.Where(line => !line.Contains(input));
+                            File.WriteAllLines("player.txt", newPlayerList);
+                            FileStream fs = new FileStream("player.txt", FileMode.Append);
+                            fs.Close();
+                        }
+                    }
+                    else if (!playerList.Contains(input))
+                    {
+                        Console.WriteLine("\n No entry with that name could be found. . .");
+                        Console.ReadKey();
+                    }
+                }
+
+                //TODO implement way to delete entry in stats-list
+
+            }
         }
     }
 }
